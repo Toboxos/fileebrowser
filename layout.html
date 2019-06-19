@@ -1,0 +1,95 @@
+{%PHP%}
+<!DOCTYPE HTML>
+<html class="js">
+    <head>
+        <!-- META -->
+        <meta charset="UTF-8">
+        
+        <!-- CSS -->
+        <link href='https://fonts.googleapis.com/css?family=Nunito:400,700' rel='stylesheet' type='text/css'>
+        
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+        
+        <style>
+            {%CSS%}
+        </style>
+
+        <script type="text/javascript">
+            {%JAVASCRIPT%}
+        </script>
+    </head>
+    
+    <body>
+        <h1 style="float: left">File-Browser</h1>
+        <div class="actions">
+            <div onclick="toggleCreate();" class="icon-small folder-create"></div>
+            <div onclick="toggleFolder();" class="icon-small folder-delete" id="folderStatus"></div>
+            <div onclick="toggleUpload();" class="icon-small file-upload"></div>
+            <div onclick="fileDownload();" class="icon-small file-download" id="fileDownload"></div>
+            <div onclick="fileDelete();" class="icon-small file-delete" id="fileDelete"></div>
+        </div>
+        
+        <br>
+        <br>
+        <br>
+        
+        <content>
+            <h1><?php echo $path; ?></h1>
+            <form action="" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="path" value="<?php echo $path; ?>">;
+                <input type="hidden" name="delete" value="false">
+                <input type="hidden" name="action" value="0">
+                
+                <div id="folder-name" style="display: none; padding:10px">
+                    <input class="text-input" type="text" name="folder-name" value="Neuer Ordner">
+                    <button type="submit" name="create" class="green-button">Ordner erstellen</button>
+                    <br>
+                </div>
+                
+                <div id="file-upload" style="padding: 10px; display: none">
+                    <input type="file" name="file" id="file-7" class="inputfile inputfile-6" data-multiple-caption="{count} files selected" multiple />
+                    <label for="file-7"><span></span> <strong> Datei w&auml;hlen&hellip;</strong></label>
+                    <button type="submit" name="upload" class="green-button">Datei hochladen</button>
+                </div>
+                
+                <?php
+                    foreach($dir AS $content) {
+                        if( is_dir($path . "/" . $content) ) {
+                            echo '<button type="submit" name="target" value="' . $content . '"><div class="box"><div class="icon folder folder-view"></div><div class="text">' . $content . '</div></div></button>';
+                        } else {
+                            echo '<button type="submit" name="target" value="' . $content . '"><div class="box"><div class="icon file file-view"></div><div class="text">' . $content . '</div></div></button>';
+                        }
+                    }
+                ?>
+            </form>
+        </content>
+    </body>
+    
+    <script>
+        ;( function(document, window, index) {
+            var inputs = document.querySelectorAll( '.inputfile' );
+            Array.prototype.forEach.call( inputs, function( input ) {
+                var label = input.nextElementSibling, labelVal = label.innerHTML;
+                
+                input.addEventListener('change', function( e ) {
+                    var fileName = '';
+                    if( this.files && this.files.length > 1 ) 
+                        fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+                    else
+                        fileName = e.target.value.split( '\\' ).pop();
+                    
+                    if( fileName )
+                        label.querySelector( 'span' ).innerHTML = fileName;
+                    else 
+                        label.innerHTML = labelVal;
+                });
+                
+                // Firefox Bugfix
+                input.addEventListener( 'focus', function(){ input.classList.add( 'has-focus' ); });
+                input.addEventListener( 'blur', function(){ input.classList.remove( 'has-focus' ); });
+            });
+        }( document, window, 0));
+    </script>
+</html>
+
